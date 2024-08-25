@@ -6,7 +6,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 function FilterableMultiSelectDropdown({ data }) {
   const [filter, setFilter] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
-  const [filteredData, setFilteredData] = useState([]); // State to store the filtered data
+  const [filteredNumbers, setFilteredNumbers] = useState([]); // State to store the filtered numbers
+  const [filteredAlphabets, setFilteredAlphabets] = useState([]); // State to store the filtered alphabets
+  const [highestLowercaseAlphabet, setHighestLowercaseAlphabet] = useState(""); // State to store the highest lowercase alphabet
 
   const options = ["Numbers", "Alphabets", "Higest lowercase Alphabet"];
 
@@ -21,20 +23,26 @@ function FilterableMultiSelectDropdown({ data }) {
 
     setSelectedItems(updatedSelectedItems);
 
-    // Filter data based on selected items
-    const newFilteredData = [];
-
     if (updatedSelectedItems.includes("Numbers")) {
-      newFilteredData.push(...data.numbers);
-    }
-    if (updatedSelectedItems.includes("Alphabets")) {
-      newFilteredData.push(...data.alphabets);
-    }
-    if (updatedSelectedItems.includes("Lowercase Alphabet")) {
-      newFilteredData.push(...data.lowercase_alphabet);
+      setFilteredNumbers(data.numbers);
+    } else {
+      setFilteredNumbers([]);
     }
 
-    setFilteredData(newFilteredData);
+    if (updatedSelectedItems.includes("Alphabets")) {
+      setFilteredAlphabets(data.alphabets);
+    } else {
+      setFilteredAlphabets([]);
+    }
+
+    if (updatedSelectedItems.includes("Higest lowercase Alphabet")) {
+      const highestLowercase = String.fromCharCode(
+        Math.max(...data.lowercase_alphabet.map((char) => char.charCodeAt(0)))
+      );
+      setHighestLowercaseAlphabet(highestLowercase);
+    } else {
+      setHighestLowercaseAlphabet("");
+    }
   };
 
   const filteredOptions = options.filter((option) =>
@@ -80,11 +88,20 @@ function FilterableMultiSelectDropdown({ data }) {
         </Dropdown.Menu>
       </Dropdown>
 
-      {/* Conditionally render OutputDisplay only when there's filtered data */}
-      {filteredData.length > 0 && (
+      {/* Conditionally render OutputDisplay components for each category */}
+      {filteredNumbers.length > 0 && (
+        <OutputDisplay title="Numbers" content={filteredNumbers.join(", ")} />
+      )}
+      {filteredAlphabets.length > 0 && (
         <OutputDisplay
-          title="Filtered Output"
-          content={filteredData.join(", ")}
+          title="Alphabets"
+          content={filteredAlphabets.join(", ")}
+        />
+      )}
+      {highestLowercaseAlphabet && (
+        <OutputDisplay
+          title="Highest Lowercase Alphabet"
+          content={highestLowercaseAlphabet}
         />
       )}
     </div>

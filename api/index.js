@@ -11,7 +11,11 @@ const configSchema = z.object({
 
 const env = configSchema.parse(process.env);
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://13.235.132.143:3000/bfhl",
+  })
+);
 app.use(express.json());
 
 app.get("/bfhl", async (req, res) => {
