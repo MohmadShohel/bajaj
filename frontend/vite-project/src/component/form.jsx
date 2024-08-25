@@ -32,13 +32,16 @@ export const FormComponent = () => {
     }
 
     try {
-      const response = await fetch("http://13.235.132.143:3000/bfhl", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(input), // Convert input back to JSON string
-      });
+      const response = await fetch(
+        "https://pewegetqyt.ap-south-1.awsapprunner.com/bfhl",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(input), // Convert input back to JSON string
+        }
+      );
 
       const result = await response.json();
       setResponse(result); // Store the API response in state
