@@ -1,6 +1,7 @@
 import express from "express";
 import { z } from "zod";
 import { config } from "dotenv";
+import cors from "cors";
 
 config();
 const configSchema = z.object({
@@ -10,6 +11,7 @@ const configSchema = z.object({
 
 const env = configSchema.parse(process.env);
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.get("/bfhl", async (req, res) => {
@@ -19,13 +21,17 @@ app.get("/bfhl", async (req, res) => {
 });
 app.post("/bfhl", async (req, res) => {
   try {
+    const { data } = req.body;
     let numbers = [];
     let alphabets = [];
     let lowercase_alphabet = [];
     for (let i = 0; i < data.length; i++) {
       if (!isNaN(data[i])) {
         numbers.push(data[i]);
-      } else if (data[i].charCodeAt(0) >= 97 && data[i].charCodeAt(0) <= 122) {
+      } else if (
+        data[i].toLowerCase().charCodeAt(0) >= 97 &&
+        data[i].toLowerCase().charCodeAt(0) <= 122
+      ) {
         alphabets.push(data[i]);
         if (lowercase_alphabet.length === 0) {
           lowercase_alphabet.push(data[i]);
@@ -41,7 +47,7 @@ app.post("/bfhl", async (req, res) => {
         }
       }
     }
-    const { data } = req.body;
+
     if (!data) {
       return res.status(400).json({
         is_success: false,
@@ -54,7 +60,7 @@ app.post("/bfhl", async (req, res) => {
         roll_number: "21BIT0025",
         numbers,
         alphabets,
-        lowercase_aplhabet,
+        lowercase_alphabet,
       });
     }
   } catch (error) {
@@ -66,5 +72,5 @@ app.post("/bfhl", async (req, res) => {
   }
 });
 app.listen(env.PORT, () => {
-  console.log("Server is running on PORT ${env.PORT}");
+  console.log(`Server is running on PORT ${env.PORT}`);
 });
